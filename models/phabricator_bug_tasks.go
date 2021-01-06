@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/luoxiaojun1992/go-skeleton/services/db"
+	"github.com/luoxiaojun1992/go-skeleton/services/db/mysql"
 	"gorm.io/gorm/clause"
 	"time"
 )
@@ -55,7 +55,7 @@ func (pbt *PhabricatorBugTasks) BatchInsert(tasks []PhabricatorBugTasks, retry b
 	err := doBatchInsert()
 
 	if retry {
-		if db.CausedByLostConnection(err) {
+		if mysql.CausedByLostConnection(err) {
 			return doBatchInsert()
 		}
 	}

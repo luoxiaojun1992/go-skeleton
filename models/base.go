@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/luoxiaojun1992/go-skeleton/services/db"
+	"github.com/luoxiaojun1992/go-skeleton/services/db/mysql"
 )
 
 type BaseModel struct {
@@ -13,14 +13,14 @@ type ModelInterface interface {
 
 type QueryBuilder struct {
 	Model    ModelInterface
-	DBClient *db.ConnWrapper
+	DBClient *mysql.ConnWrapper
 }
 
 // NOTE When query with struct, GORM will only query with those fields has non-zero value, that means if your field’s value is 0, '', false or other zero values, it won’t be used to build query conditions
 func (baseModel *BaseModel) Query(model ModelInterface) *QueryBuilder {
 	return &QueryBuilder{
 		Model:    model,
-		DBClient: db.Connection(model.Connection()),
+		DBClient: mysql.Connection(model.Connection()),
 	}
 }
 
@@ -33,7 +33,7 @@ func (qb *QueryBuilder) FindByPk(pk interface{}, retry bool) error {
 
 	if retry {
 		if !qb.DBClient.InTransaction {
-			if db.CausedByLostConnection(err) {
+			if mysql.CausedByLostConnection(err) {
 				return doFirst()
 			}
 		}
@@ -42,7 +42,7 @@ func (qb *QueryBuilder) FindByPk(pk interface{}, retry bool) error {
 	return err
 }
 
-func (qb *QueryBuilder) FirstByWhere(where func(dbClient *db.ConnWrapper) *db.ConnWrapper, retry bool) error {
+func (qb *QueryBuilder) FirstByWhere(where func(dbClient *mysql.ConnWrapper) *mysql.ConnWrapper, retry bool) error {
 	doFindByWhere := func() error {
 		newDB := where(qb.DBClient)
 		qb.DBClient = newDB
@@ -53,7 +53,7 @@ func (qb *QueryBuilder) FirstByWhere(where func(dbClient *db.ConnWrapper) *db.Co
 
 	if retry {
 		if !qb.DBClient.InTransaction {
-			if db.CausedByLostConnection(err) {
+			if mysql.CausedByLostConnection(err) {
 				return doFindByWhere()
 			}
 		}
