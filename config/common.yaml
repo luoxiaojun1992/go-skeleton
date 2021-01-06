@@ -1,3 +1,7 @@
+app:
+  runMode: ${APP_RUN_MODE}
+  server:
+    port: ${APP_SERVER_PORT}
 db:
   defaultConnection: ${DB_DEFAULT_CONNECTION}
   connections:
