@@ -68,7 +68,7 @@ func Connection(connection string) *ConnWrapper {
 	if db, ok := Clients[connection]; ok {
 		return &ConnWrapper{db, false}
 	} else {
-		log.Panic("failed to get db [" + connection + "] connection: not existed")
+		log.Panicln("failed to get db [" + connection + "] connection: not existed")
 	}
 
 	return nil

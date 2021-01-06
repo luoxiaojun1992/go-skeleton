@@ -179,7 +179,7 @@ func (be *BugExporter) Export(start string, end string) {
 				be.AddTaskRecords(tasks)
 				tasks = []*phabricator.ManiphestSearchResponseItem{}
 			} else {
-				log.Panic("Too many phabricator tasks")
+				log.Panicln("Too many phabricator tasks")
 			}
 		}
 	})
@@ -189,7 +189,7 @@ func (be *BugExporter) Export(start string, end string) {
 		if tasksLen <= 200 {
 			be.AddTaskRecords(tasks)
 		} else {
-			log.Panic("Too many phabricator tasks")
+			log.Panicln("Too many phabricator tasks")
 		}
 	}
 }

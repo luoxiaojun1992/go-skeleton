@@ -6,7 +6,7 @@ import (
 
 // Error Handling
 func PanicErr(errMsg string, errs ...error) {
-	log.Panic(errMsg, ": ", errs)
+	log.Panicln(errMsg, ": ", errs)
 }
 
 func CheckErr(errs ...error) bool {

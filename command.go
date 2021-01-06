@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/luoxiaojun1992/go-skeleton/bootstrap"
 	"github.com/luoxiaojun1992/go-skeleton/commands/phabricator"
+	"github.com/luoxiaojun1992/go-skeleton/commands/server"
 	"log"
 )
 
@@ -16,6 +17,10 @@ func main() {
 			bugReporter := &phabricator.BugReporter{}
 			bugReporter.Run(bugReporter, app)
 		}
+		handlers["http"] = func() {
+			httpServer := &server.HttpServer{}
+			httpServer.Run(httpServer, app)
+		}
 		handlers["help"] = func() {
 			flag.PrintDefaults()
 		}
@@ -23,7 +28,7 @@ func main() {
 		if handler, hasHandler := handlers[app.CommandName]; hasHandler {
 			handler()
 		} else {
-			log.Panic("Handler not found")
+			log.Panicln("Handler not found")
 		}
 	}, func(app *bootstrap.App) {
 		var configures map[string]func()
@@ -32,11 +37,17 @@ func main() {
 		configures["phabricator_bug_exporter"] = func() {
 			(&phabricator.BugReporter{}).ParseOptions(app.Flag)
 		}
+		configures["http"] = func() {
+			(&server.HttpServer{}).ParseOptions(app.Flag)
+		}
+		configures["help"] = func() {
+			//
+		}
 
 		if configure, hasConfigure := configures[app.CommandName]; hasConfigure {
 			configure()
 		} else {
-			log.Panic("Configure not found")
+			log.Panicln("Configure not found")
 		}
 	})
 }
