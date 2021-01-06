@@ -1,0 +1,19 @@
+db:
+  defaultConnection: ${DB_DEFAULT_CONNECTION}
+  connections:
+    default:
+      driver: ${DB_DEFAULT_DRIVER}
+      host: ${DB_DEFAULT_HOST}
+      port: ${DB_DEFAULT_PORT}
+      username: ${DB_DEFAULT_USERNAME}
+      password: ${DB_DEFAULT_PASSWORD}
+      dbName: ${DB_DEFAULT_DBNAME}
+      charset: ${DB_DEFAULT_CHARSET}
+      maxIdleConns: ${DB_DEFAULT_MAX_IDLE_CONNS}
+      maxOpenConns: ${DB_DEFAULT_MAX_OPEN_CONNS}
+      connMaxLifetime: ${DB_DEFAULT_CONN_MAX_LIFETIME}
+      debug: ${DB_DEFAULT_DEBUG}
+      tablePrefix: ${DB_DEFAULT_TABLE_PREFIX}
+phabricator:
+  api_gateway: ${PHABRICATOR_API_GATEWAY}
+  api_token: ${PHABRICATOR_API_TOKEN}
