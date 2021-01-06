@@ -2,13 +2,13 @@ package main
 
 import (
 	"flag"
-	"github.com/luoxiaojun1992/go-skeleton/bootstrap/command"
+	"github.com/luoxiaojun1992/go-skeleton/bootstrap"
 	"github.com/luoxiaojun1992/go-skeleton/commands/phabricator"
 	"log"
 )
 
 func main() {
-	command.Create().Run(func(app *command.App) {
+	bootstrap.Create().Run(func(app *bootstrap.App) {
 		var handlers map[string]func()
 		handlers = make(map[string]func())
 
@@ -25,7 +25,7 @@ func main() {
 		} else {
 			log.Panic("Handler not found")
 		}
-	}, func(app *command.App) {
+	}, func(app *bootstrap.App) {
 		var configures map[string]func()
 		configures = make(map[string]func())
 
