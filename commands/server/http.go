@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/config/v2"
 	"github.com/luoxiaojun1992/go-skeleton/commands"
+	httpServerConsts "github.com/luoxiaojun1992/go-skeleton/consts/server/http"
 	"github.com/luoxiaojun1992/go-skeleton/router"
 	"github.com/luoxiaojun1992/go-skeleton/services/helper"
 	"log"
@@ -21,19 +22,19 @@ type HttpServer struct {
 }
 
 func (hs *HttpServer) startServer() {
-	switch config.String("app.runMode", "release") {
-	case "test":
+	switch config.String("app.runMode", httpServerConsts.RUN_MODE_RELEASE) {
+	case httpServerConsts.RUN_MODE_TEST:
 		gin.SetMode(gin.TestMode)
-	case "debug":
+	case httpServerConsts.RUN_MODE_DEBUG:
 		gin.SetMode(gin.DebugMode)
-	case "release":
+	case httpServerConsts.RUN_MODE_RELEASE:
 		fallthrough
 	default:
 		gin.SetMode(gin.ReleaseMode)
 	}
 
 	srv := &http.Server{
-		Addr:    ":" + config.String("app.server.port", "8888"),
+		Addr:    ":" + config.String("app.server.port", httpServerConsts.DEFAULT_PORT),
 		Handler: router.Register(),
 	}
 
