@@ -34,6 +34,8 @@ func (br *BugReporter) validOptions() {
 
 func (br *BugReporter) Handle() {
 	log.Println("Start...")
+	log.Println("Task Start Time: " + br.OptionStartTime)
+	log.Println("Task End Time: " + br.OptionEndTime)
 
 	br.validOptions()
 	(&phabricatorLogic.BugExporter{}).Export(br.OptionStartTime, br.OptionEndTime)

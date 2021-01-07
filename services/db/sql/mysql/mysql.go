@@ -101,7 +101,7 @@ func Create(connection string) *gorm.DB {
 	tablePrefix := config.String("db.connections." + connection + ".table_prefix")
 
 	newDB, errOpenDB := gorm.Open(
-		mysql.Open(username+":"+password+"@tcp("+host+":"+port+")/"+dbName+"?charset="+charset),
+		mysql.Open(username+":"+password+"@tcp("+host+":"+port+")/"+dbName+"?charset="+charset+"&parseTime=True&loc=Local"),
 		&gorm.Config{
 			SkipDefaultTransaction: true,
 			PrepareStmt:            true,
