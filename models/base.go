@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/luoxiaojun1992/go-skeleton/services/db/mysql"
+	"github.com/luoxiaojun1992/go-skeleton/services/db/sql/mysql"
 )
 
 type BaseModel struct {

@@ -5,7 +5,7 @@ import (
 	"github.com/luoxiaojun1992/go-skeleton/commands"
 	phabricatorLogic "github.com/luoxiaojun1992/go-skeleton/logics/phabricator"
 	"github.com/luoxiaojun1992/go-skeleton/services/helper"
-	"github.com/luoxiaojun1992/go-skeleton/services/utils"
+	"github.com/luoxiaojun1992/go-skeleton/services/utils/time/timezone"
 	"log"
 	"time"
 )
@@ -17,7 +17,7 @@ type BugReporter struct {
 }
 
 func (br *BugReporter) validOptions() {
-	location := utils.DefaultTimezone()
+	location := timezone.DefaultTimezone()
 
 	modifiedStart, errModifiedStart := time.ParseInLocation("2006-01-02 15:04:05", br.OptionStartTime, location)
 	helper.CheckErrThenPanic("Failed to parse task modified start", errModifiedStart)

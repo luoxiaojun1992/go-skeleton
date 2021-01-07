@@ -6,7 +6,7 @@ import (
 	"github.com/luoxiaojun1992/go-skeleton/models"
 	"github.com/luoxiaojun1992/go-skeleton/services/helper"
 	"github.com/luoxiaojun1992/go-skeleton/services/phabricator"
-	"github.com/luoxiaojun1992/go-skeleton/services/utils"
+	"github.com/luoxiaojun1992/go-skeleton/services/utils/time/timezone"
 	"github.com/uber/gonduit/responses"
 	"log"
 	"time"
@@ -161,7 +161,7 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 }
 
 func (be *BugExporter) Export(start string, end string) {
-	location := utils.DefaultTimezone()
+	location := timezone.DefaultTimezone()
 
 	modifiedStart, errModifiedStart := time.ParseInLocation("2006-01-02 15:04:05", start, location)
 	helper.CheckErrThenPanic("failed to parse task modified start", errModifiedStart)

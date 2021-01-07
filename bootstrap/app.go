@@ -5,7 +5,7 @@ import (
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/yaml"
 	"github.com/gookit/ini/v2/dotnev"
-	"github.com/luoxiaojun1992/go-skeleton/services/db/mysql"
+	"github.com/luoxiaojun1992/go-skeleton/services/db/sql/mysql"
 	"github.com/luoxiaojun1992/go-skeleton/services/helper"
 	"github.com/luoxiaojun1992/go-skeleton/services/phabricator"
 	"os"
