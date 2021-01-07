@@ -228,6 +228,7 @@ func (c *Client) Connect() *gonduit.Conn {
 	return apiClient
 }
 
+//max batch is 100
 func (c *Client) SearchUsers(userIds []string, batch uint64, callback func(data []*UserSearchResponseItem)) {
 	start := 0
 	end := batch
@@ -270,6 +271,7 @@ func (c *Client) SearchUsers(userIds []string, batch uint64, callback func(data 
 	}
 }
 
+//max batch is 100
 func (c *Client) SearchTags(tagIds []string, batch uint64, callback func(data []*responses.ProjectSearchResponseItem)) {
 	start := 0
 	end := batch
@@ -310,6 +312,7 @@ func (c *Client) SearchTags(tagIds []string, batch uint64, callback func(data []
 	}
 }
 
+//max batch is 100
 func (c *Client) SearchLiveBugs(start time.Time, end time.Time, batch uint64, callback func(data []*ManiphestSearchResponseItem)) {
 	modifiedAfter := UnixTimestamp(start)
 	modifiedBefore := UnixTimestamp(end)
