@@ -15,8 +15,8 @@ func Register() *gin.Engine {
 		if err, ok := recovered.(string); ok {
 			errMsg := fmt.Sprintf("error: %s", err)
 			c.JSON(http.StatusInternalServerError, gin.H{
-				"msg":     errMsg,
-				"code":    1,
+				"msg":  errMsg,
+				"code": 1,
 			})
 		}
 		c.AbortWithStatus(http.StatusInternalServerError)
