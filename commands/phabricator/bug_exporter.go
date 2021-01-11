@@ -14,6 +14,7 @@ type BugReporter struct {
 	commands.BaseCommand
 	OptionStartTime string
 	OptionEndTime   string
+	Debug           bool
 }
 
 func (br *BugReporter) validOptions() {
@@ -32,18 +33,31 @@ func (br *BugReporter) validOptions() {
 	}
 }
 
-func (br *BugReporter) Handle() {
+func (br *BugReporter) handleWithDebug(handler func()) {
 	log.Println("Start...")
 	log.Println("Task Start Time: " + br.OptionStartTime)
 	log.Println("Task End Time: " + br.OptionEndTime)
 
-	br.validOptions()
-	(&phabricatorLogic.BugExporter{}).Export(br.OptionStartTime, br.OptionEndTime)
+	handler()
 
 	log.Println("Finished.")
+}
+
+func (br *BugReporter) Handle() {
+	handler := func() {
+		br.validOptions()
+		(&phabricatorLogic.BugExporter{}).Export(br.OptionStartTime, br.OptionEndTime)
+	}
+
+	if br.Debug {
+		br.handleWithDebug(handler)
+	} else {
+		handler()
+	}
 }
 
 func (br *BugReporter) ParseOptions(flag *flag.FlagSet) {
 	flag.StringVar(&br.OptionStartTime, "start", time.Now().Add(-15*time.Minute).Format("2006-01-02 15:04")+":00", "Start Time")
 	flag.StringVar(&br.OptionEndTime, "end", time.Now().Add(-1*time.Minute).Format("2006-01-02 15:04")+":59", "End Time")
+	flag.BoolVar(&br.Debug, "debug", false, "Debug")
 }
