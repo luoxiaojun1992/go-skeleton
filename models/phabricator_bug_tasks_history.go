@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type PhabricatorBugTasks struct {
+type PhabricatorBugTasksHistory struct {
 	BaseModel
 	UUID             string    `gorm:"primaryKey,column:uuid"`
 	TaskID           int64     `gorm:"column:task_id"`
@@ -32,20 +32,20 @@ type PhabricatorBugTasks struct {
 }
 
 // ORM框架自动通过此方法获取表名，如果不存在此方法默认根据model struct名解析表名
-func (pbt *PhabricatorBugTasks) TableName() string {
-	return "phabricator_bug_tasks"
+func (pbth *PhabricatorBugTasksHistory) TableName() string {
+	return "phabricator_bug_tasks_history"
 }
 
-func (pbt *PhabricatorBugTasks) Connection() string {
+func (pbth *PhabricatorBugTasksHistory) Connection() string {
 	return ""
 }
 
-func (pbt *PhabricatorBugTasks) BatchInsert(tasks []PhabricatorBugTasks, retry bool) error {
+func (pbth *PhabricatorBugTasksHistory) BatchInsert(tasks []PhabricatorBugTasksHistory, retry bool) error {
 	doBatchInsert := func() error {
-		return pbt.Query(pbt).DBClient.Clauses(clause.OnConflict{
-			Columns: []clause.Column{{Name: "task_id"}},
+		return pbth.Query(pbth).DBClient.Clauses(clause.OnConflict{
+			Columns: []clause.Column{{Name: "task_id"}, {Name: "task_status"}},
 			DoUpdates: clause.AssignmentColumns([]string{
-				"task_phid", "task_name", "task_status", "task_priority", "task_sub_priority", "task_priority_name",
+				"task_phid", "task_name", "task_priority", "task_sub_priority", "task_priority_name",
 				"task_author_phid", "task_author_name", "task_owner_phid", "task_owner_name", "task_closer_phid",
 				"task_closer_name", "task_closed", "task_closed_datetime", "task_created", "task_created_datetime",
 				"task_modified", "task_modified_datetime", "task_tags",

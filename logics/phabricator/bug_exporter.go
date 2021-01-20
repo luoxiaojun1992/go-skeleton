@@ -47,21 +47,21 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 
 	for _, task := range tasks {
 		if len(task.Fields.AuthorPHID) > 0 {
-			if len(userIds) < 200 {
+			if len(userIds) <= 200 {
 				userIds = append(userIds, task.Fields.AuthorPHID)
 			} else {
 				log.Println("too many phabricator task users")
 			}
 		}
 		if len(task.Fields.OwnerPHID) > 0 {
-			if len(userIds) < 200 {
+			if len(userIds) <= 200 {
 				userIds = append(userIds, task.Fields.OwnerPHID)
 			} else {
 				log.Println("too many phabricator task users")
 			}
 		}
 		if len(task.Fields.CloserPHID) > 0 {
-			if len(userIds) < 200 {
+			if len(userIds) <= 200 {
 				userIds = append(userIds, task.Fields.CloserPHID)
 			} else {
 				log.Println("too many phabricator task users")
@@ -78,16 +78,42 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 	tagsInfo := be.FetchTagsInfo(tagIds)
 
 	var taskRecords []models.PhabricatorBugTasks
+	var taskHistoryRecords []models.PhabricatorBugTasksHistory
 
 	for _, task := range tasks {
 		taskRecord := models.PhabricatorBugTasks{
-			JingUUID:         shortuuid.New(),
+			UUID:         shortuuid.New(),
 			TaskID:           int64(task.ID),
 			TaskPHID:         task.PHID,
 			TaskName:         task.Fields.Name,
 			TaskStatus:       task.Fields.Status.Value,
 			TaskPriority:     float64(task.Fields.Priority.Value),
 			TaskSubPriority:  task.Fields.Priority.Subpriority,
+			TaskPriorityName: task.Fields.Priority.Name,
+			TaskAuthorPHID:   task.Fields.AuthorPHID,
+			TaskAuthorName:   "",
+			TaskOwnerPHID:    task.Fields.OwnerPHID,
+			TaskOwnerName:    "",
+			TaskCloserPHID:   task.Fields.CloserPHID,
+			TaskCloserName:   "",
+			TaskClosed:       0,
+			TaskClosedDate:   time.Time{},
+			TaskCreated:      0,
+			TaskCreatedDate:  time.Time{},
+			TaskModified:     0,
+			TaskModifiedDate: time.Time{},
+			TaskTags:         "",
+		}
+
+		taskHistoryRecord := models.PhabricatorBugTasksHistory{
+			UUID:         shortuuid.New(),
+			TaskID:           int64(task.ID),
+			TaskPHID:         task.PHID,
+			TaskName:         task.Fields.Name,
+			TaskStatus:       task.Fields.Status.Value,
+			TaskPriority:     float64(task.Fields.Priority.Value),
+			TaskSubPriority:  task.Fields.Priority.Subpriority,
+			TaskPriorityName: task.Fields.Priority.Name,
 			TaskAuthorPHID:   task.Fields.AuthorPHID,
 			TaskAuthorName:   "",
 			TaskOwnerPHID:    task.Fields.OwnerPHID,
@@ -107,6 +133,7 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 			authorName, hasAuthorName := usersInfo[task.Fields.AuthorPHID]
 			if hasAuthorName {
 				taskRecord.TaskAuthorName = authorName
+				taskHistoryRecord.TaskAuthorName = authorName
 			}
 		}
 
@@ -114,6 +141,7 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 			ownerName, hasOwnerName := usersInfo[task.Fields.OwnerPHID]
 			if hasOwnerName {
 				taskRecord.TaskOwnerName = ownerName
+				taskHistoryRecord.TaskOwnerName = ownerName
 			}
 		}
 
@@ -121,6 +149,7 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 			closerName, hasCloserName := usersInfo[task.Fields.CloserPHID]
 			if hasCloserName {
 				taskRecord.TaskCloserName = closerName
+				taskHistoryRecord.TaskCloserName = closerName
 			}
 		}
 
@@ -128,18 +157,24 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 			dateCreated := time.Time(*task.Fields.DateCreated)
 			taskRecord.TaskCreated = dateCreated.Unix()
 			taskRecord.TaskCreatedDate = dateCreated
+			taskHistoryRecord.TaskCreated = dateCreated.Unix()
+			taskHistoryRecord.TaskCreatedDate = dateCreated
 		}
 
 		if task.Fields.DateModified != nil {
 			dateModified := time.Time(*task.Fields.DateModified)
 			taskRecord.TaskModified = dateModified.Unix()
 			taskRecord.TaskModifiedDate = dateModified
+			taskHistoryRecord.TaskModified = dateModified.Unix()
+			taskHistoryRecord.TaskModifiedDate = dateModified
 		}
 
 		if task.Fields.DateClosed != nil {
 			dateClosed := time.Time(*task.Fields.DateClosed)
 			taskRecord.TaskClosed = dateClosed.Unix()
 			taskRecord.TaskClosedDate = dateClosed
+			taskHistoryRecord.TaskClosed = dateClosed.Unix()
+			taskHistoryRecord.TaskClosedDate = dateClosed
 		}
 
 		tagNames := []string{}
@@ -152,12 +187,16 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 		taskTags, errEncodeTags := json.Marshal(&tagNames)
 		helper.CheckErrThenPanic("failed to encode tags json", errEncodeTags)
 		taskRecord.TaskTags = string(taskTags)
+		taskHistoryRecord.TaskTags = string(taskTags)
 
 		taskRecords = append(taskRecords, taskRecord)
+		taskHistoryRecords = append(taskHistoryRecords, taskHistoryRecord)
 	}
 
-	errUpsertAll := (&models.PhabricatorBugTasks{}).BatchInsert(taskRecords, true)
-	helper.CheckErrThenPanic("failed to upsert tasks", errUpsertAll)
+	errUpsertAllRecords := (&models.PhabricatorBugTasks{}).BatchInsert(taskRecords, true)
+	helper.CheckErrThenPanic("failed to upsert tasks", errUpsertAllRecords)
+	errUpsertAllHistoryRecords := (&models.PhabricatorBugTasksHistory{}).BatchInsert(taskHistoryRecords, true)
+	helper.CheckErrThenPanic("failed to upsert tasks history", errUpsertAllHistoryRecords)
 }
 
 func (be *BugExporter) Export(start string, end string) {
