@@ -82,7 +82,7 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 
 	for _, task := range tasks {
 		taskRecord := models.PhabricatorBugTasks{
-			UUID:         shortuuid.New(),
+			UUID:             shortuuid.New(),
 			TaskID:           int64(task.ID),
 			TaskPHID:         task.PHID,
 			TaskName:         task.Fields.Name,
@@ -106,7 +106,7 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 		}
 
 		taskHistoryRecord := models.PhabricatorBugTasksHistory{
-			UUID:         shortuuid.New(),
+			UUID:             shortuuid.New(),
 			TaskID:           int64(task.ID),
 			TaskPHID:         task.PHID,
 			TaskName:         task.Fields.Name,
