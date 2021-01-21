@@ -8,6 +8,7 @@ import (
 	"github.com/luoxiaojun1992/go-skeleton/services/db/sql/mysql"
 	"github.com/luoxiaojun1992/go-skeleton/services/helper"
 	"github.com/luoxiaojun1992/go-skeleton/services/phabricator"
+	"github.com/luoxiaojun1992/go-skeleton/services/utils/time/timezone"
 	"os"
 )
 
@@ -67,6 +68,7 @@ func (app *App) InitFramework(configure func(app *App)) {
 	app.InitArgs(configure)
 	app.InitEnv()
 	app.InitConfig()
+	timezone.Setup()
 	mysql.Setup()
 	phabricator.Setup()
 }

@@ -18,7 +18,7 @@ type BugReporter struct {
 }
 
 func (br *BugReporter) validOptions() {
-	location := timezone.DefaultTimezone()
+	location := timezone.Timezone()
 
 	modifiedStart, errModifiedStart := time.ParseInLocation("2006-01-02 15:04:05", br.OptionStartTime, location)
 	helper.CheckErrThenPanic("Failed to parse task modified start", errModifiedStart)
@@ -57,7 +57,8 @@ func (br *BugReporter) Handle() {
 }
 
 func (br *BugReporter) ParseOptions(flag *flag.FlagSet) {
-	flag.StringVar(&br.OptionStartTime, "start", time.Now().Add(-15*time.Minute).Format("2006-01-02 15:04")+":00", "Start Time")
-	flag.StringVar(&br.OptionEndTime, "end", time.Now().Add(-1*time.Minute).Format("2006-01-02 15:04")+":59", "End Time")
+	location := timezone.Timezone()
+	flag.StringVar(&br.OptionStartTime, "start", time.Now().Add(-15*time.Minute).In(location).Format("2006-01-02 15:04")+":00", "Start Time")
+	flag.StringVar(&br.OptionEndTime, "end", time.Now().Add(-1*time.Minute).In(location).Format("2006-01-02 15:04")+":59", "End Time")
 	flag.BoolVar(&br.Debug, "debug", false, "Debug")
 }

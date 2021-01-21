@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"github.com/gookit/config/v2"
 	"github.com/luoxiaojun1992/go-skeleton/services/helper"
+	"github.com/luoxiaojun1992/go-skeleton/services/utils/time/timezone"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 	"log"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -99,9 +101,10 @@ func Create(connection string) *gorm.DB {
 	dbName := config.String("db.connections." + connection + ".dbName")
 	charset := config.String("db.connections." + connection + ".charset")
 	tablePrefix := config.String("db.connections." + connection + ".table_prefix")
+	timezoneName := config.String("db.connections."+connection+".timezone", timezone.TimezoneName())
 
 	newDB, errOpenDB := gorm.Open(
-		mysql.Open(username+":"+password+"@tcp("+host+":"+port+")/"+dbName+"?charset="+charset+"&parseTime=True&loc=Local"),
+		mysql.Open(username+":"+password+"@tcp("+host+":"+port+")/"+dbName+"?charset="+charset+"&parseTime=True&loc="+url.QueryEscape(timezoneName)),
 		&gorm.Config{
 			SkipDefaultTransaction: true,
 			PrepareStmt:            true,

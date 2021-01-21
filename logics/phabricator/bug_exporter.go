@@ -200,7 +200,7 @@ func (be *BugExporter) AddTaskRecords(tasks []*phabricator.ManiphestSearchRespon
 }
 
 func (be *BugExporter) Export(start string, end string) {
-	location := timezone.DefaultTimezone()
+	location := timezone.Timezone()
 
 	modifiedStart, errModifiedStart := time.ParseInLocation("2006-01-02 15:04:05", start, location)
 	helper.CheckErrThenPanic("failed to parse task modified start", errModifiedStart)

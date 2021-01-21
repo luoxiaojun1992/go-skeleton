@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gookit/config/v2"
 	"github.com/luoxiaojun1992/go-skeleton/services/helper"
+	"github.com/luoxiaojun1992/go-skeleton/services/utils/time/timezone"
 	"github.com/uber/gonduit"
 	"github.com/uber/gonduit/core"
 	"github.com/uber/gonduit/entities"
@@ -110,7 +111,7 @@ func (t *UnixTimestamp) UnmarshalJSON(data []byte) (err error) {
 		return err
 	}
 
-	*t = UnixTimestamp(time.Unix(int64(seconds), 0))
+	*t = UnixTimestamp(time.Unix(int64(seconds), 0).In(Phabricator.Timezone))
 
 	return nil
 }
@@ -212,12 +213,14 @@ var Phabricator *Client
 type Client struct {
 	ApiGateway string
 	ApiToken   string
+	Timezone   *time.Location
 }
 
 func Setup() {
 	Phabricator = &Client{
 		ApiGateway: config.String("phabricator.api_gateway"),
 		ApiToken:   config.String("phabricator.api_token"),
+		Timezone:   timezone.GetTimezone(config.String("phabricator.timezone", timezone.TimezoneName())),
 	}
 }
 
