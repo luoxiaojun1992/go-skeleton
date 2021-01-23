@@ -64,3 +64,5 @@ func ConditionalOperator(condition bool, expr1 func() interface{}, expr2 func() 
 		return expr2()
 	}
 }
+
+// TODO parseInt parseStr strIntval (redigo)
