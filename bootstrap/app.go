@@ -8,6 +8,7 @@ import (
 	"github.com/luoxiaojun1992/go-skeleton/services/db/sql/mysql"
 	"github.com/luoxiaojun1992/go-skeleton/services/helper"
 	"github.com/luoxiaojun1992/go-skeleton/services/phabricator"
+	phpSerializer "github.com/luoxiaojun1992/go-skeleton/services/utils/serializer/php"
 	"github.com/luoxiaojun1992/go-skeleton/services/utils/time/timezone"
 	"os"
 )
@@ -69,6 +70,7 @@ func (app *App) InitFramework(configure func(app *App)) {
 	app.InitEnv()
 	app.InitConfig()
 	timezone.Setup()
+	phpSerializer.Setup()
 	mysql.Setup()
 	phabricator.Setup()
 }
